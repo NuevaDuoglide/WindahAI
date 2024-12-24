@@ -36,11 +36,17 @@ async def capture_packets_to_csv(packet_limit=10):
                 'Timestamp': getattr(packet, 'sniff_time', None),
                 'Source_IP': getattr(packet.ip, 'src', None) if hasattr(packet, 'ip') else None,
                 'Destination_IP': getattr(packet.ip, 'dst', None) if hasattr(packet, 'ip') else None,
-                'Source_Port': getattr(packet.tcp, 'srcport', None) if hasattr(packet, 'tcp') else 
-                               (getattr(packet.udp, 'srcport', None) if hasattr(packet, 'udp') else None),
-                'Destination_Port': getattr(packet.tcp, 'dstport', None) if hasattr(packet, 'tcp') else 
-                                    (getattr(packet.udp, 'dstport', None) if hasattr(packet, 'udp') else None),
-                'Protocol': getattr(packet.highest_layer, 'layer_name', None),
+                'Source_Port': (
+                    getattr(packet.tcp, 'srcport', None) if hasattr(packet, 'tcp') else
+                    (getattr(packet.udp, 'srcport', None) if hasattr(packet, 'udp') else None)
+                ),
+                'Destination_Port': (
+                    getattr(packet.tcp, 'dstport', None) if hasattr(packet, 'tcp') else
+                    (getattr(packet.udp, 'dstport', None) if hasattr(packet, 'udp') else None)
+                ),
+                'Protocols': ', '.join(
+                    [layer.layer_name for layer in packet.layers]
+                ) if hasattr(packet, 'layers') else None,
                 'Packet_Length': getattr(packet, 'length', None),
             }
 
