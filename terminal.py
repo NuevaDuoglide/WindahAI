@@ -44,10 +44,9 @@ async def capture_packets_to_csv(packet_limit=10):
                     getattr(packet.tcp, 'dstport', None) if hasattr(packet, 'tcp') else
                     (getattr(packet.udp, 'dstport', None) if hasattr(packet, 'udp') else None)
                 ),
-                'Protocols': ', '.join(
-                    [layer.layer_name for layer in packet.layers]
-                ) if hasattr(packet, 'layers') else None,
+                'Protocol': 'TCP' if hasattr(packet, 'tcp') else ('UDP' if hasattr(packet, 'udp') else None),
                 'Packet_Length': getattr(packet, 'length', None),
+
             }
 
             packet_data.append(pkt_info)
